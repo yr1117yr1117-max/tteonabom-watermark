@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>오늘도 떠나봄 · 워터마크 도구</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&family=Noto+Serif+KR:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #004e82;
+      --navy-dark: #00385e;
+      --yellow: #f7cf46;
+      --bg: #f5f7fa;
+      --card: #ffffff;
+      --text: #1c2430;
+      --muted: #647082;
+      --border: #dfe5ee;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .wrap {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 20px 16px 48px;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .badge {
+      background: var(--yellow);
+      color: #1c2430;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 5px 12px;
+      border-radius: 999px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 20px;
+      color: var(--navy);
+      font-weight: 700;
+    }
+    .sub {
+      font-size: 13px;
+      color: var(--muted);
+      margin: 2px 0 0;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0, 30, 60, 0.04);
+    }
+    .dropzone {
+      border: 2px dashed #9eb8d0;
+      border-radius: 14px;
+      padding: 32px 16px;
+      text-align: center;
+      background: #f9fbfd;
+      cursor: pointer;
+      transition: 0.15s ease;
+    }
+    .dropzone.dragover {
+      border-color: var(--navy);
+      background: #eef5fc;
+    }
+    .dropzone strong {
+      display: block;
+      font-size: 16px;
+      color: var(--navy);
+      margin-bottom: 6px;
+    }
+    .dropzone span {
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+    .ctrl label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+    .ctrl input[type="range"] {
+      width: 100%;
+      accent-color: var(--navy);
+    }
+    .ctrl select {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      background: #fff;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+    .btn {
+      border: 0;
+      border-radius: 10px;
+      padding: 11px 18px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+    }
+    .btn-primary {
+      background: var(--navy);
+      color: #fff;
+    }
+    .btn-primary:hover { background: var(--navy-dark); }
+    .btn-primary:disabled {
+      background: #b5c4d4;
+      cursor: not-allowed;
+    }
+    .btn-ghost {
+      background: #edf2f7;
+      color: var(--text);
+    }
+    .status {
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+    }
+    .item {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .item img {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      display: block;
+      background: #eef2f6;
+      cursor: zoom-in;
+    }
+    .item-foot {
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 12px;
+    }
+    .fname {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--text);
+      font-weight: 600;
+    }
+    .dl-one {
+      flex-shrink: 0;
+      background: #eef5fc;
+      color: var(--navy);
+      border: 0;
+      border-radius: 7px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.82);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 99;
+    }
+    .modal.open { display: flex; }
+    .modal img {
+      max-width: 100%;
+      max-height: 92vh;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <div class="brand">
+          <span class="badge">오늘도 떠나봄</span>
+          <h1>도용방지 중앙 워터마크 도구</h1>
+        </div>
+        <p class="sub">사진이 서버로 전송되지 않고 내 기기 안에서만 바로 처리됩니다. (EXIF 자동 제거)</p>
+      </div>
+    </header>
+
+    <div class="card">
+      <div id="dropzone" class="dropzone">
+        <strong>여기를 눌러 사진 선택 (여러 장 가능)</strong>
+        <span>또는 PC에서 사진 파일을 이 박스로 끌어다 놓으세요 (JPG, PNG, WEBP)</span>
+        <input id="fileInput" type="file" accept="image/*" multiple hidden />
+      </div>
+
+      <div class="controls">
+        <div class="ctrl">
+          <label><span>워터마크 투명도</span><span id="alphaVal">43%</span></label>
+          <input id="alphaRange" type="range" min="20" max="80" value="43" />
+        </div>
+        <div class="ctrl">
+          <label><span>세로 위치</span><span id="posVal">56%</span></label>
+          <input id="posRange" type="range" min="35" max="75" value="56" />
+        </div>
+        <div class="ctrl">
+          <label><span>저장 크기</span></label>
+          <select id="sizeSelect">
+            <option value="1200" selected>블로그용 가로 1200px (권장)</option>
+            <option value="0">원본 해상도 유지</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="actions">
+        <span id="status" class="status">사진을 선택하면 자동으로 1번 중앙 워터마크가 들어갑니다.</span>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button id="resetBtn" class="btn btn-ghost" type="button">기본값 복원</button>
+          <button id="clearBtn" class="btn btn-ghost" type="button">목록 비우기</button>
+          <button id="zipBtn" class="btn btn-primary" type="button" disabled>전체 ZIP 저장 (0장)</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="grid" class="grid"></div>
+  </div>
+
+  <div id="modal" class="modal" onclick="this.classList.remove('open')">
+    <img id="modalImg" src="" alt="미리보기" />
+  </div>
+
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const dropzone = document.getElementById('dropzone');
+    const alphaRange = document.getElementById('alphaRange');
+    const posRange = document.getElementById('posRange');
+    const sizeSelect = document.getElementById('sizeSelect');
+    const alphaVal = document.getElementById('alphaVal');
+    const posVal = document.getElementById('posVal');
+    const statusEl = document.getElementById('status');
+    const grid = document.getElementById('grid');
+    const zipBtn = document.getElementById('zipBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const modal = document.getElementById('modal');
+    const modalImg = document.getElementById('modalImg');
+
+    let items = []; // { name, file, blob, url }
+
+    dropzone.addEventListener('click', () => fileInput.click());
+    dropzone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropzone.classList.add('dragover');
+    });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('dragover');
+      addFiles(e.dataTransfer.files);
+    });
+    fileInput.addEventListener('change', (e) => {
+      addFiles(e.target.files);
+      fileInput.value = '';
+    });
+
+    alphaRange.addEventListener('input', () => {
+      alphaVal.textContent = alphaRange.value + '%';
+    });
+    posRange.addEventListener('input', () => {
+      posVal.textContent = posRange.value + '%';
+    });
+    alphaRange.addEventListener('change', reprocessAll);
+    posRange.addEventListener('change', reprocessAll);
+    sizeSelect.addEventListener('change', reprocessAll);
+
+    resetBtn.addEventListener('click', () => {
+      alphaRange.value = 43;
+      posRange.value = 56;
+      sizeSelect.value = '1200';
+      alphaVal.textContent = '43%';
+      posVal.textContent = '56%';
+      reprocessAll();
+    });
+
+    clearBtn.addEventListener('click', () => {
+      items.forEach(it => URL.revokeObjectURL(it.url));
+      items = [];
+      render();
+    });
+
+    async function ensureFonts() {
+      if (document.fonts && document.fonts.ready) {
+        try { await document.fonts.ready; } catch (_) {}
+      }
+    }
+
+    async function addFiles(fileList) {
+      const files = Array.from(fileList || []).filter(f => f.type.startsWith('image/'));
+      if (!files.length) return;
+      await ensureFonts();
+      statusEl.textContent = `${files.length}장 처리 중...`;
+      for (const f of files) {
+        const res = await processOne(f);
+        items.push(res);
+      }
+      render();
+    }
+
+    async function reprocessAll() {
+      if (!items.length) return;
+      await ensureFonts();
+      statusEl.textContent = '새 설정으로 다시 입히는 중...';
+      for (let i = 0; i < items.length; i++) {
+        URL.revokeObjectURL(items[i].url);
+        items[i] = await processOne(items[i].file);
+      }
+      render();
+    }
+
+    async function processOne(file) {
+      const bitmap = await createImageBitmap(file);
+      const maxW = parseInt(sizeSelect.value, 10);
+      let w = bitmap.width;
+      let h = bitmap.height;
+      if (maxW > 0 && w > maxW) {
+        h = Math.round(h * (maxW / w));
+        w = maxW;
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(bitmap, 0, 0, w, h);
+      bitmap.close();
+
+      const scale = w / 1200;
+      const alpha = parseInt(alphaRange.value, 10) / 100;
+      const subAlpha = Math.max(0.15, alpha - 0.04);
+      const cy = Math.round(h * (parseInt(posRange.value, 10) / 100));
+      const cx = Math.round(w / 2);
+      const off = Math.max(1, Math.round(2 * scale));
+
+      const mainSize = Math.max(24, Math.round(54 * scale));
+      const subSize = Math.max(13, Math.round(24 * scale));
+
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      // Main title
+      ctx.font = `400 ${mainSize}px "Noto Serif KR", "Nanum Myeongjo", "Batang", serif`;
+      ctx.fillStyle = `rgba(0, 0, 0, ${(alpha * 0.5).toFixed(3)})`;
+      ctx.fillText('오 늘 도   떠 나 봄', cx + off, cy + off);
+      ctx.fillStyle = `rgba(255, 255, 255, ${alpha.toFixed(3)})`;
+      ctx.fillText('오 늘 도   떠 나 봄', cx, cy);
+
+      // Subtitle
+      const sy = cy + Math.round(48 * scale);
+      ctx.font = `400 ${subSize}px "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif`;
+      ctx.fillStyle = `rgba(0, 0, 0, ${(subAlpha * 0.5).toFixed(3)})`;
+      ctx.fillText('blog.naver.com/yr1117', cx + off, sy + off);
+      ctx.fillStyle = `rgba(255, 255, 255, ${subAlpha.toFixed(3)})`;
+      ctx.fillText('blog.naver.com/yr1117', cx, sy);
+
+      const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.91));
+      const url = URL.createObjectURL(blob);
+      const baseName = file.name.replace(/\.[^.]+$/, '') + '_wm.jpg';
+      return { name: baseName, file, blob, url };
+    }
+
+    function render() {
+      grid.innerHTML = '';
+      items.forEach((it) => {
+        const card = document.createElement('div');
+        card.className = 'item';
+
+        const img = document.createElement('img');
+        img.src = it.url;
+        img.alt = it.name;
+        img.onclick = () => {
+          modalImg.src = it.url;
+          modal.classList.add('open');
+        };
+
+        const foot = document.createElement('div');
+        foot.className = 'item-foot';
+
+        const nameEl = document.createElement('span');
+        nameEl.className = 'fname';
+        nameEl.textContent = it.name;
+
+        const btn = document.createElement('button');
+        btn.className = 'dl-one';
+        btn.type = 'button';
+        btn.textContent = '저장';
+        btn.onclick = () => downloadBlob(it.blob, it.name);
+
+        foot.appendChild(nameEl);
+        foot.appendChild(btn);
+        card.appendChild(img);
+        card.appendChild(foot);
+        grid.appendChild(card);
+      });
+
+      zipBtn.disabled = items.length === 0;
+      zipBtn.textContent = `전체 ZIP 저장 (${items.length}장)`;
+      statusEl.textContent = items.length
+        ? `${items.length}장 완료! 눌러서 크게 확인하거나 ZIP으로 한 번에 저장하세요.`
+        : '사진을 선택하면 자동으로 1번 중앙 워터마크가 들어갑니다.';
+    }
+
+    function downloadBlob(blob, filename) {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        URL.revokeObjectURL(a.href);
+        a.remove();
+      }, 1000);
+    }
+
+    // Minimal pure-JS Store ZIP builder (no external CDN needed)
+    const crcTable = (() => {
+      const t = new Uint32Array(256);
+      for (let i = 0; i < 256; i++) {
+        let c = i;
+        for (let k = 0; k < 8; k++) c = (c & 1) ? (0xedb88320 ^ (c >>> 1)) : (c >>> 1);
+        t[i] = c >>> 0;
+      }
+      return t;
+    })();
+
+    function crc32(bytes) {
+      let c = 0xffffffff;
+      for (let i = 0; i < bytes.length; i++) c = crcTable[(c ^ bytes[i]) & 0xff] ^ (c >>> 8);
+      return (c ^ 0xffffffff) >>> 0;
+    }
+
+    zipBtn.addEventListener('click', async () => {
+      if (!items.length) return;
+      zipBtn.disabled = true;
+      zipBtn.textContent = 'ZIP 묶는 중...';
+
+      const enc = new TextEncoder();
+      const parts = [];
+      const central = [];
+      let offset = 0;
+
+      for (const it of items) {
+        const nameBytes = enc.encode(it.name);
+        const data = new Uint8Array(await it.blob.arrayBuffer());
+        const crc = crc32(data);
+
+        const lh = new ArrayBuffer(30 + nameBytes.length);
+        const lv = new DataView(lh);
+        lv.setUint32(0, 0x04034b50, true);
+        lv.setUint16(4, 20, true);
+        lv.setUint16(6, 0x0800, true); // UTF-8
+        lv.setUint16(8, 0, true); // store
+        lv.setUint16(10, 0, true);
+        lv.setUint16(12, 0, true);
+        lv.setUint32(14, crc, true);
+        lv.setUint32(18, data.length, true);
+        lv.setUint32(22, data.length, true);
+        lv.setUint16(26, nameBytes.length, true);
+        lv.setUint16(28, 0, true);
+        new Uint8Array(lh, 30).set(nameBytes);
+
+        parts.push(new Uint8Array(lh), data);
+
+        const ch = new ArrayBuffer(46 + nameBytes.length);
+        const cv = new DataView(ch);
+        cv.setUint32(0, 0x02014b50, true);
+        cv.setUint16(4, 20, true);
+        cv.setUint16(6, 20, true);
+        cv.setUint16(8, 0x0800, true);
+        cv.setUint16(10, 0, true);
+        cv.setUint16(12, 0, true);
+        cv.setUint16(14, 0, true);
+        cv.setUint32(16, crc, true);
+        cv.setUint32(20, data.length, true);
+        cv.setUint32(24, data.length, true);
+        cv.setUint16(28, nameBytes.length, true);
+        cv.setUint16(30, 0, true);
+        cv.setUint16(32, 0, true);
+        cv.setUint16(34, 0, true);
+        cv.setUint16(36, 0, true);
+        cv.setUint32(38, 0, true);
+        cv.setUint32(42, offset, true);
+        new Uint8Array(ch, 46).set(nameBytes);
+
+        central.push(new Uint8Array(ch));
+        offset += 30 + nameBytes.length + data.length;
+      }
+
+      const centralSize = central.reduce((s, c) => s + c.length, 0);
+      const end = new ArrayBuffer(22);
+      const ev = new DataView(end);
+      ev.setUint32(0, 0x06054b50, true);
+      ev.setUint16(4, 0, true);
+      ev.setUint16(6, 0, true);
+      ev.setUint16(8, items.length, true);
+      ev.setUint16(10, items.length, true);
+      ev.setUint32(12, centralSize, true);
+      ev.setUint32(16, offset, true);
+      ev.setUint16(20, 0, true);
+
+      const zipBlob = new Blob([...parts, ...central, new Uint8Array(end)], { type: 'application/zip' });
+      const today = new Date().toISOString().slice(0, 10);
+      downloadBlob(zipBlob, `오늘도떠나봄_워터마크_${today}.zip`);
+
+      zipBtn.disabled = false;
+      zipBtn.textContent = `전체 ZIP 저장 (${items.length}장)`;
+    });
+  </script>
+</body>
+</html>
